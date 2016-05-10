@@ -46,9 +46,9 @@
                                     <segue destination="lW8-p8-aUx" kind="push" id="MDO-oH-gn5"/>
                                 </connections>
                             </barButtonItem>
-                            <barButtonItem title="Item" id="CGX-8o-yTz">
+                            <barButtonItem title="Item" id="GQK-iX-war">
                                 <connections>
-                                    <segue destination="ncR-lv-nAv" kind="push" identifier="googlesignin" id="6U3-cw-PFJ"/>
+                                    <segue destination="ncR-lv-nAv" kind="push" identifier="googlesignin" id="IMk-F2-v2R"/>
                                 </connections>
                             </barButtonItem>
                         </leftBarButtonItems>
@@ -295,22 +295,33 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oXe-Ed-qng" customClass="GIDSignInButton">
+                                <rect key="frame" x="41" y="197" width="240" height="128"/>
+                                <color key="backgroundColor" red="0.21323952730000001" green="1" blue="0.1207311313" alpha="1" colorSpace="calibratedRGB"/>
+                            </view>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9tC-Mf-ta9">
+                                <rect key="frame" x="41" y="88" width="237" height="101"/>
+                                <accessibility key="accessibilityConfiguration">
+                                    <accessibilityTraits key="traits" staticText="YES" adjustable="YES"/>
+                                </accessibility>
+                                <string key="text">Login to YouTube andfind your online playlists</string>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="I9b-R5-gEx">
-                                <rect key="frame" x="136" y="422" width="48" height="30"/>
+                                <rect key="frame" x="135" y="379" width="48" height="30"/>
                                 <state key="normal" title="Logout"/>
                                 <connections>
                                     <action selector="LogoutTapped:" destination="ncR-lv-nAv" eventType="touchUpInside" id="NIO-p3-hOE"/>
                                 </connections>
                             </button>
-                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oXe-Ed-qng" customClass="GIDSignInButton">
-                                <rect key="frame" x="40" y="153" width="240" height="128"/>
-                                <color key="backgroundColor" red="0.21323952730000001" green="1" blue="0.1207311313" alpha="1" colorSpace="calibratedRGB"/>
-                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" title="Google Sign in" id="1yG-8g-FGe"/>
                     <connections>
+                        <outlet property="logoutButton" destination="I9b-R5-gEx" id="2GL-X7-FD6"/>
                         <segue destination="50x-ZA-jhH" kind="push" identifier="channelList" id="nGB-Pr-WAT"/>
                     </connections>
                 </viewController>

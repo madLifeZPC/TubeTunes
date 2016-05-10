@@ -16,6 +16,7 @@ class SingletonPlayer{
     var audioPlayer : AVAudioPlayer?
     var playingCategory : PlayingCategory?
     var playingMode : PlayingMode?
+    var songCache : NSData?
     
     private init(){
        

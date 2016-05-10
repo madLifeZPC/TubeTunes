@@ -11,7 +11,7 @@ import AVFoundation
 import CoreData
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate ,NSURLSessionDataDelegate, GIDSignInDelegate{
+class AppDelegate: UIResponder, UIApplicationDelegate ,NSURLSessionDataDelegate, GIDSignInDelegate, AVAudioPlayerDelegate{
 
     var window: UIWindow?
 
@@ -132,22 +132,31 @@ class AppDelegate: UIResponder, UIApplicationDelegate ,NSURLSessionDataDelegate,
                         if uniquePlayer.audioPlayer!.playing == true{
                             uniquePlayer.audioPlayer!.pause()
                         }
-                    
-                    /*case UIEventSubtype.RemoteControlNextTrack?:
-                        if onlinePlayList.selectedIndex < onlinePlayList.audios.count - 1{
-                            onlinePlayList.selectedIndex = onlinePlayList.selectedIndex + 1
-                            uniquePlayer.audioPlayer!.stop()
-                            uniquePlayer.audioPlayer = nil
-                        }*/
-                   // case UIEventSubtype.RemoteControlPreviousTrack?:
-                   //     self.playPreClick(self)
                     default:
                         break
                     }
                 }
                 else
                 {
-                    
+                    switch event?.subtype {
+                    case UIEventSubtype.RemoteControlPlay?:
+                        if uniquePlayer.audioPlayer!.playing == false{
+                            uniquePlayer.audioPlayer!.play()
+                        }
+                    case UIEventSubtype.RemoteControlPause?:
+                        if uniquePlayer.audioPlayer!.playing == true{
+                            uniquePlayer.audioPlayer!.pause()
+                        }
+                        
+                    case UIEventSubtype.RemoteControlNextTrack?:
+                        print("play next song")
+                        playNextSong()
+                    case UIEventSubtype.RemoteControlPreviousTrack?:
+                        playPreSong()
+                    default:
+                        break
+                    }
+
                 }
             }
             
@@ -220,6 +229,68 @@ class AppDelegate: UIResponder, UIApplicationDelegate ,NSURLSessionDataDelegate,
                 abort()
             }
         }
+    }
+    
+    // End playing
+    func audioPlayerDidFinishPlaying(player: AVAudioPlayer, successfully flag: Bool) {
+        
+        if SingletonPlayer.uniqueAudioPlayer.playingMode == PlayingMode.AllRepeat{
+            playNextSong()
+        }
+        else{
+            SingletonPlayer.uniqueAudioPlayer.audioPlayer?.play()
+        }
+    }
+    
+    func playNextSong()
+    {
+        
+        if LocalAudioArray.publicLocalPlayList.selectedIndex < LocalAudioArray.publicLocalPlayList.audios.count - 1{
+            LocalAudioArray.publicLocalPlayList.selectedIndex += 1
+            SingletonPlayer.uniqueAudioPlayer.audioPlayer!.stop()
+            SingletonPlayer.uniqueAudioPlayer.audioPlayer = nil
+            let audioAddress = LocalAudioArray.publicLocalPlayList.audios[LocalAudioArray.publicLocalPlayList.selectedIndex].audioAddress
+            let fileURL : NSURL = NSURL(fileURLWithPath: audioAddress!)
+            do {
+                let data = try NSData(contentsOfFile: fileURL.path!,options: .DataReadingMappedIfSafe)
+                SingletonPlayer.uniqueAudioPlayer.songCache = data
+                SingletonPlayer.uniqueAudioPlayer.audioPlayer = try AVAudioPlayer(data: SingletonPlayer.uniqueAudioPlayer.songCache!)
+                SingletonPlayer.uniqueAudioPlayer.audioPlayer?.delegate = self
+                SingletonPlayer.uniqueAudioPlayer.playingMode = PlayingMode.AllRepeat
+                //self.player
+                SingletonPlayer.uniqueAudioPlayer.audioPlayer!.prepareToPlay()
+                SingletonPlayer.uniqueAudioPlayer.audioPlayer!.play()
+                
+            }catch let error as NSError{
+                print(error.localizedDescription)
+            }
+        }
+
+    }
+    
+    func playPreSong()
+    {
+        if LocalAudioArray.publicLocalPlayList.selectedIndex > 0{
+            LocalAudioArray.publicLocalPlayList.selectedIndex -= 1
+            SingletonPlayer.uniqueAudioPlayer.audioPlayer!.stop()
+            SingletonPlayer.uniqueAudioPlayer.audioPlayer = nil
+            let audioAddress = LocalAudioArray.publicLocalPlayList.audios[LocalAudioArray.publicLocalPlayList.selectedIndex].audioAddress
+            let fileURL : NSURL = NSURL(fileURLWithPath: audioAddress!)
+            do {
+                let data = try NSData(contentsOfFile: fileURL.path!,options: .DataReadingMappedIfSafe)
+                SingletonPlayer.uniqueAudioPlayer.songCache = data
+                SingletonPlayer.uniqueAudioPlayer.audioPlayer = try AVAudioPlayer(data: SingletonPlayer.uniqueAudioPlayer.songCache!)
+                SingletonPlayer.uniqueAudioPlayer.audioPlayer?.delegate = self
+                SingletonPlayer.uniqueAudioPlayer.playingMode = PlayingMode.AllRepeat
+                //self.player
+                SingletonPlayer.uniqueAudioPlayer.audioPlayer!.prepareToPlay()
+                SingletonPlayer.uniqueAudioPlayer.audioPlayer!.play()
+                
+            }catch let error as NSError{
+                print(error.localizedDescription)
+            }
+        }
+
     }
 
 }

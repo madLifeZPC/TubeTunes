@@ -131,6 +131,7 @@
 		A11E21F81CE1BED7005B8EC6 /* PlaylistitemViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11E21F51CE1BED7005B8EC6 /* PlaylistitemViewController.swift */; };
 		A11E21FA1CE1C398005B8EC6 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A11E21F91CE1C398005B8EC6 /* GoogleService-Info.plist */; };
 		A11E21FC1CE1C70F005B8EC6 /* GoogleSigninViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11E21FB1CE1C70F005B8EC6 /* GoogleSigninViewController.swift */; };
+		A11E21FE1CE1CD5D005B8EC6 /* small_default_profile.png in Resources */ = {isa = PBXBuildFile; fileRef = A11E21FD1CE1CD5D005B8EC6 /* small_default_profile.png */; };
 		ED38A915B652F648EBA103AB /* libPods-EasyMusic.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C40AB0F87071235EC0492FF0 /* libPods-EasyMusic.a */; };
 /* End PBXBuildFile section */
 
@@ -290,6 +291,7 @@
 		A11E21F51CE1BED7005B8EC6 /* PlaylistitemViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaylistitemViewController.swift; sourceTree = "<group>"; };
 		A11E21F91CE1C398005B8EC6 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A11E21FB1CE1C70F005B8EC6 /* GoogleSigninViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoogleSigninViewController.swift; sourceTree = "<group>"; };
+		A11E21FD1CE1CD5D005B8EC6 /* small_default_profile.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = small_default_profile.png; sourceTree = "<group>"; };
 		C40AB0F87071235EC0492FF0 /* libPods-EasyMusic.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-EasyMusic.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -331,6 +333,7 @@
 		0E14B1471CD5E88B0032932D /* image */ = {
 			isa = PBXGroup;
 			children = (
+				A11E21FD1CE1CD5D005B8EC6 /* small_default_profile.png */,
 				0E5B90E61CDEE2B400D53F2F /* player_btn_repeat_highlight@2x.png */,
 				A10E9C7C1CE1BD6600069CEB /* yoMusic_red.png */,
 				0E5B90E71CDEE2B400D53F2F /* player_btn_repeatone_highlight@2x.png */,
@@ -792,6 +795,7 @@
 				0E5BF1E21CD9B06B00BBF00C /* cm2_btmlay_btn_add.png in Resources */,
 				0E14B17D1CD5E88B0032932D /* cm2_mv_btn_play_ver_night_prs.png in Resources */,
 				0E14B1891CD5E88B0032932D /* cm2_play_disc_radio_bg-ip6@2x.png in Resources */,
+				A11E21FE1CE1CD5D005B8EC6 /* small_default_profile.png in Resources */,
 				0E53B9FD1CD5AB44000C7902 /* MusicCell.xib in Resources */,
 				0E5BF1E61CD9B06B00BBF00C /* cm2_btmlay_btn_complete@2x.png in Resources */,
 				0E14B1741CD5E88B0032932D /* cm2_guide_startbtn_left.png in Resources */,

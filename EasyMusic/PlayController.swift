@@ -32,7 +32,7 @@ class PlayController: UIViewController ,NSURLSessionDataDelegate, AVAudioPlayerD
     
     // online Resources
     var onlineSongs = YoutubeAudioArray.publicOnlinePlayList
-    var songCache : NSData?
+    var songCache = SingletonPlayer.uniqueAudioPlayer.songCache
     
     // local Resources
     var localSongs = LocalAudioArray.publicLocalPlayList

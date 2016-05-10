@@ -11,12 +11,21 @@ import UIKit
 class GoogleSigninViewController: UIViewController , GIDSignInUIDelegate
 {
 
+    @IBOutlet weak var logoutButton: UIButton!
     override func viewDidLoad() {
         super.viewDidLoad()
         GIDSignIn.sharedInstance().uiDelegate = self
         //GIDSignIn.sharedInstance().signIn()
         //[[GIDSignIn sharedInstance] signIn];
         // Do any additional setup after loading the view.
+        if(GIDSignIn.sharedInstance().hasAuthInKeychain())
+        {
+            logoutButton.hidden = true;
+            GIDSignIn.sharedInstance().signInSilently()
+        }
+        else{
+            logoutButton.hidden = false;
+        }
     }
 
     override func didReceiveMemoryWarning() {
