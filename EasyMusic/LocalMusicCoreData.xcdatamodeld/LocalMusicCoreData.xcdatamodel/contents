@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="10174" systemVersion="15B42" minimumToolsVersion="Xcode 7.0">
+    <entity name="LocalSong" representedClassName="LocalSong" syncable="YES">
+        <attribute name="filePath" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="imageLink" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="localSong_playList" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="PlayList" syncable="YES"/>
+    </entity>
+    <entity name="PlayList" representedClassName=".PlayList" syncable="YES">
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="playList_localSong" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="LocalSong" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="LocalSong" positionX="-63" positionY="-18" width="128" height="105"/>
+        <element name="PlayList" positionX="-63" positionY="9" width="128" height="75"/>
+    </elements>
+</model>
