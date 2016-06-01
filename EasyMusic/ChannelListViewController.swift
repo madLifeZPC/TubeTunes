@@ -19,6 +19,8 @@ class ChannelListViewController: UITableViewController, NSURLSessionDelegate {
         let nib = UINib(nibName: "MusicCell", bundle: nil)
         tableView.registerNib(nib, forCellReuseIdentifier: "MusicCell")
         tableView.reloadData()        // Do any additional setup after loading the view.
+        let item = UIBarButtonItem(title: "Back", style: .Plain, target: self, action: nil)
+        self.navigationItem.backBarButtonItem = item;
     }
     
     override func didReceiveMemoryWarning() {

@@ -77,6 +77,7 @@ class LocalMusicController: UIViewController ,UITableViewDelegate,UITableViewDat
             self.publicLocalPlayList.audios.appendContentsOf(self.localSongs)
             self.publicLocalPlayList.selectedIndex = 0
             SingletonPlayer.uniqueAudioPlayer.playingCategory = PlayingCategory.LocalPlaying
+            SingletonPlayer.uniqueAudioPlayer.playEntrance = PlayEntrance.restart
             self.performSegueWithIdentifier("playLocal", sender: self.publicLocalPlayList)
 
         }
@@ -115,6 +116,7 @@ class LocalMusicController: UIViewController ,UITableViewDelegate,UITableViewDat
         self.publicLocalPlayList.audios.append(self.localSongs[indexPath.row])
         self.publicLocalPlayList.selectedIndex = 0
         SingletonPlayer.uniqueAudioPlayer.playingCategory = PlayingCategory.LocalPlaying
+        SingletonPlayer.uniqueAudioPlayer.playEntrance = PlayEntrance.restart
         self.performSegueWithIdentifier("playLocal", sender: self.publicLocalPlayList)
     }
     
@@ -122,9 +124,9 @@ class LocalMusicController: UIViewController ,UITableViewDelegate,UITableViewDat
     func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         if editingStyle == .Delete {
             
-            let alertPopUp:UIAlertController = UIAlertController(title:"Warning",message: "Are you sure to delete this song from your device?",preferredStyle: UIAlertControllerStyle.Alert)
+            let alertPopUp:UIAlertController = UIAlertController(title:"Confirmation",message: "Are you sure to delete this song from your device?",preferredStyle: UIAlertControllerStyle.Alert)
             
-            let confirmAction = UIAlertAction(title: "YES", style: .Cancel){
+            let confirmAction = UIAlertAction(title: "YES", style: .Destructive){
                 action -> Void in
                 
                 let selectedTitle = self.localSongs[indexPath.row].title
@@ -132,20 +134,60 @@ class LocalMusicController: UIViewController ,UITableViewDelegate,UITableViewDat
                 if selectedSong != nil {
                     do {
                         // delete the audio file
-                        let fileManager = NSFileManager.defaultManager()
-                        try fileManager.removeItemAtPath((selectedSong?.filePath)!)
-                        // delete the audio record
+                        let paths = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)
+                        if paths.count > 0 {
+                            let dirPath = paths[0]
+                            let fileName = selectedSong?.title!.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)
+                            let filePath = NSString(format:"%@/%@", dirPath, fileName!) as String
+                            if NSFileManager.defaultManager().fileExistsAtPath(filePath) {
+                                try NSFileManager.defaultManager().removeItemAtPath(filePath)
+                            }
+                        }
+                        
+                        // delete the audio record from localSongTable
                         self.managedObjectContext.deleteObject(selectedSong!)
+                        // delete the audio record from playListTable
+                        
+                        let entityDesc = NSEntityDescription.entityForName("ListContent", inManagedObjectContext: self.managedObjectContext)
+                        let request = NSFetchRequest()
+                        request.entity = entityDesc
+                        let pred = NSPredicate(format: "(songName = %@)", selectedTitle!)
+                        request.predicate = pred
+                        
+                        do{
+                            let results = try self.managedObjectContext.executeFetchRequest(request)
+                            var i = 0
+                            while( i < results.count ) {
+                                let match = results[i] as! NSManagedObject
+                                let playListItem =  (match as! ListContent)
+                                self.managedObjectContext.deleteObject(playListItem)
+                                i = i + 1
+                            }
+                        }catch let error as NSError{
+                            print("Failed : \(error.localizedDescription)")
+                        }
+                        
                         try self.managedObjectContext.save()
                         // delete the audio cache
                         self.localSongs.removeAtIndex(indexPath.row)
+                        // delete the audio from the localplaylist
+                        
+                        if SingletonPlayer.uniqueAudioPlayer.playingCategory == PlayingCategory.LocalPlaying {
+                            for (index, object) in self.publicLocalPlayList.audios.enumerate(){
+                                if object.title == selectedTitle && self.publicLocalPlayList.selectedIndex != index {
+                                    self.publicLocalPlayList.audios.removeAtIndex(index)
+                                    break
+                                }
+                            }
+                        }
+                        
                         // delete the audio ui cell
                         tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
                     }catch let error as NSError{
                         print("Failed : \(error.localizedDescription)")
                     }
                 }
-
+                
             }
             
             let cancelAction = UIAlertAction(title: "NO", style: .Cancel) {action -> Void in}
@@ -154,6 +196,7 @@ class LocalMusicController: UIViewController ,UITableViewDelegate,UITableViewDat
             self.presentViewController(alertPopUp, animated: true, completion: nil)
         }
     }
+
     
     // find song
     func findSong( title : String ) -> LocalSong? {

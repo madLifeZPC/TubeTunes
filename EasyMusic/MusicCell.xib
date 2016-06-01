@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="10117" systemVersion="15B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
@@ -11,19 +12,31 @@
             <rect key="frame" x="0.0" y="0.0" width="320" height="71"/>
             <autoresizingMask key="autoresizingMask"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Mbs-a0-L38" id="gcr-ob-aL9">
-                <rect key="frame" x="0.0" y="0.0" width="320" height="70"/>
+                <rect key="frame" x="0.0" y="0.0" width="320" height="70.5"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="easyMusic.png" translatesAutoresizingMaskIntoConstraints="NO" id="Jka-B8-sg2">
-                        <rect key="frame" x="20" y="8" width="54" height="54"/>
-                    </imageView>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="SongName" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NL4-ld-bRA">
-                        <rect key="frame" x="91" y="8" width="207" height="54"/>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="SongName" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NL4-ld-bRA">
+                        <rect key="frame" x="82" y="16" width="222" height="38"/>
                         <fontDescription key="fontDescription" type="system" pointSize="16"/>
                         <nil key="highlightedColor"/>
                     </label>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="easyMusic.png" translatesAutoresizingMaskIntoConstraints="NO" id="Jka-B8-sg2">
+                        <rect key="frame" x="20" y="8" width="54" height="54"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="54" id="idx-d5-IkV"/>
+                        </constraints>
+                    </imageView>
                 </subviews>
                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                <constraints>
+                    <constraint firstAttribute="trailingMargin" secondItem="NL4-ld-bRA" secondAttribute="trailing" constant="8" id="4LY-ow-Adc"/>
+                    <constraint firstItem="NL4-ld-bRA" firstAttribute="leading" secondItem="Jka-B8-sg2" secondAttribute="trailing" constant="8" id="L8q-Cf-N2y"/>
+                    <constraint firstItem="Jka-B8-sg2" firstAttribute="centerY" secondItem="NL4-ld-bRA" secondAttribute="centerY" id="TcG-h8-RsT"/>
+                    <constraint firstAttribute="bottomMargin" secondItem="NL4-ld-bRA" secondAttribute="bottom" constant="8" id="Tci-a6-nXI"/>
+                    <constraint firstItem="Jka-B8-sg2" firstAttribute="leading" secondItem="gcr-ob-aL9" secondAttribute="leadingMargin" constant="12" id="aED-39-cdc"/>
+                    <constraint firstItem="NL4-ld-bRA" firstAttribute="top" secondItem="gcr-ob-aL9" secondAttribute="topMargin" constant="8" id="aHb-Mz-ZVg"/>
+                    <constraint firstItem="Jka-B8-sg2" firstAttribute="top" secondItem="gcr-ob-aL9" secondAttribute="topMargin" id="i0m-D2-czS"/>
+                </constraints>
             </tableViewCellContentView>
             <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
             <connections>

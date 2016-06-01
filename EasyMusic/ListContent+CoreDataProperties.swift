@@ -1,8 +1,8 @@
 //
-//  LocalSong+CoreDataProperties.swift
+//  ListContent+CoreDataProperties.swift
 //  EasyMusic
 //
-//  Created by madlife on 8/5/16.
+//  Created by Vrinda Gupta on 10/5/16.
 //  Copyright © 2016 madlife. All rights reserved.
 //
 //  Choose "Create NSManagedObject Subclass…" from the Core Data editor menu
@@ -12,11 +12,9 @@
 import Foundation
 import CoreData
 
-extension LocalSong {
+extension ListContent {
 
-    @NSManaged var filePath: String?
-    @NSManaged var imageLink: String?
-    @NSManaged var title: String?
-    @NSManaged var localSong_playList: NSSet?
+    @NSManaged var listName: String?
+    @NSManaged var songName: String?
 
 }

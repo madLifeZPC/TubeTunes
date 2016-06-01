@@ -51,30 +51,101 @@ class PlayController: UIViewController ,NSURLSessionDataDelegate, AVAudioPlayerD
         // Do any additional setup after loading the view, typically from a nib.
         
         //Load needlImageView
-        self.needleImageView = UIImageView(frame: CGRectMake(160, 90, 60, 105))
-        self.setAnchorPoint(CGPointMake(0.25, 0.16), forview: self.needleImageView!)
-        self.rotateNeedle(false,speed: 0.0)
-        self.needleImageView?.image = UIImage(named: "cm2_play_needle_play.png")
-        self.view.addSubview(self.needleImageView!)
-       
-        // stop playing last song
-        if self.player.audioPlayer != nil {
-            self.player.audioPlayer!.stop()
-            self.player.audioPlayer = nil
+        
+        
+        enum UIUserInterfaceIdiom : Int
+        {
+            case Unspecified
+            case Phone
+            case Pad
         }
         
-        //play
-        if self.player.playingCategory == PlayingCategory.OnlinePlaying {
-            if onlineSongs.audios.isEmpty == false{
-                self.startOnlinePlaying()
+        struct ScreenSize
+        {
+            static let SCREEN_WIDTH         = UIScreen.mainScreen().bounds.size.width
+            static let SCREEN_HEIGHT        = UIScreen.mainScreen().bounds.size.height
+            static let SCREEN_MAX_LENGTH    = max(ScreenSize.SCREEN_WIDTH, ScreenSize.SCREEN_HEIGHT)
+            static let SCREEN_MIN_LENGTH    = min(ScreenSize.SCREEN_WIDTH, ScreenSize.SCREEN_HEIGHT)
+        }
+        
+        struct DeviceType
+        {
+            static let IS_IPHONE_4_OR_LESS  = UIDevice.currentDevice().userInterfaceIdiom == .Phone && ScreenSize.SCREEN_MAX_LENGTH < 568.0
+            static let IS_IPHONE_5          = UIDevice.currentDevice().userInterfaceIdiom == .Phone && ScreenSize.SCREEN_MAX_LENGTH == 568.0
+            static let IS_IPHONE_6          = UIDevice.currentDevice().userInterfaceIdiom == .Phone && ScreenSize.SCREEN_MAX_LENGTH == 667.0
+            static let IS_IPHONE_6P         = UIDevice.currentDevice().userInterfaceIdiom == .Phone && ScreenSize.SCREEN_MAX_LENGTH == 736.0
+            static let IS_IPAD              = UIDevice.currentDevice().userInterfaceIdiom == .Pad && ScreenSize.SCREEN_MAX_LENGTH == 1024.0
+            static let IS_IPAD_PRO          = UIDevice.currentDevice().userInterfaceIdiom == .Pad && ScreenSize.SCREEN_MAX_LENGTH == 1366.0
+        }
+        
+        if DeviceType.IS_IPHONE_5 {
+            print("IS_IPHONE_5")
+            
+            self.needleImageView = UIImageView(frame: CGRectMake(160, 90, 60, 105))
+            self.setAnchorPoint(CGPointMake(0.25, 0.16), forview: self.needleImageView!)
+            self.rotateNeedle(false,speed: 0.0)
+            self.needleImageView?.image = UIImage(named: "cm2_play_needle_play.png")
+            self.view.addSubview(self.needleImageView!)
+        }
+        
+        if DeviceType.IS_IPHONE_6 {
+            
+            self.needleImageView = UIImageView(frame: CGRectMake(160, 135, 60, 105))
+            self.setAnchorPoint(CGPointMake(0.25, 0.16), forview: self.needleImageView!)
+            self.rotateNeedle(false,speed: 0.0)
+            self.needleImageView?.image = UIImage(named: "cm2_play_needle_play.png")
+            self.view.addSubview(self.needleImageView!)
+            
+        }
+        
+        if DeviceType.IS_IPHONE_6P {
+            
+            self.needleImageView = UIImageView(frame: CGRectMake(170, 140, 60, 105))
+            self.setAnchorPoint(CGPointMake(0.25, 0.16), forview: self.needleImageView!)
+            self.rotateNeedle(false,speed: 0.0)
+            self.needleImageView?.image = UIImage(named: "cm2_play_needle_play.png")
+            self.view.addSubview(self.needleImageView!)
+            
+        }
+        
+        if DeviceType.IS_IPHONE_4_OR_LESS {
+            
+            self.needleImageView = UIImageView(frame: CGRectMake(160, 70, 60, 90))
+            self.setAnchorPoint(CGPointMake(0.25, 0.16), forview: self.needleImageView!)
+            self.rotateNeedle(false,speed: 0.0)
+            self.needleImageView?.image = UIImage(named: "cm2_play_needle_play.png")
+            self.view.addSubview(self.needleImageView!)
+            
+        }
+
+
+       
+        // stop playing last song
+        if self.player.playEntrance == PlayEntrance.restart{
+            if self.player.audioPlayer != nil {
+                self.player.audioPlayer!.stop()
+                self.player.audioPlayer = nil
             }
+            //play
+            if self.player.playingCategory == PlayingCategory.OnlinePlaying {
+                if onlineSongs.audios.isEmpty == false{
+                    self.startOnlinePlaying()
+                }
+            }
+            else
+            {
+                if localSongs.audios.isEmpty == false{
+                    self.startLocalPlaying()
+                }
+            }
+            
         }
         else
         {
-            if localSongs.audios.isEmpty == false{
-                self.startLocalPlaying()
-            }
+            updateUI()
         }
+        
+        
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PlayController.updateUI), name: UIApplicationDidBecomeActiveNotification, object: nil)
     }
@@ -155,11 +226,22 @@ class PlayController: UIViewController ,NSURLSessionDataDelegate, AVAudioPlayerD
         
     }
     
+    override func viewWillAppear(animated: Bool) {
+        if SingletonPlayer.uniqueAudioPlayer.audioPlayer?.playing == false {
+            self.albumImageView.pauseRotating()
+            self.rotateNeedle(false, speed: 0.5)
+        self.playOrPauseBtn.setBackgroundImage(UIImage(named:"player_btn_play_normal.png"),
+                                                   forState: .Normal)
+        }
+    }
+    
     override func viewWillDisappear(animated: Bool) {
         self.timer?.invalidate()
         self.timer = nil
         self.requestCount = 0
         self.songCache = nil
+        
+        UIDevice.currentDevice().setValue(UIInterfaceOrientation.Portrait.rawValue, forKey: "orientation")
         
     }
     
@@ -397,27 +479,30 @@ class PlayController: UIViewController ,NSURLSessionDataDelegate, AVAudioPlayerD
             let documentPath = documentPaths[0]
             let fileName = self.onlineSongs.audios[self.onlineSongs.selectedIndex].title
             let encodeFileName = fileName?.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)
+            let filePath = NSString(format:"%@/%@", documentPath, encodeFileName!) as String
             
-            let filePath = documentPath + "/" + encodeFileName!
-            let fileURL = NSURL(fileURLWithPath: filePath)
-            print(filePath)
             // save it to the device
-            if self.songCache?.writeToFile(fileURL.path!, atomically: true) == true
-            {
-                // save it to the database
-                let entityDesc = NSEntityDescription.entityForName("LocalSong", inManagedObjectContext: managedObjectContext)
-                let song = LocalSong(entity: entityDesc!, insertIntoManagedObjectContext: managedObjectContext)
-                song.title = self.onlineSongs.audios[self.onlineSongs.selectedIndex].title
-                song.imageLink = self.onlineSongs.audios[self.onlineSongs.selectedIndex].imageLink
-                song.filePath = filePath
-                do{
-                    try managedObjectContext.save()
-                    self.downLoadBtn.setBackgroundImage(UIImage(named:"player_btn_downloaded_highlight@2x.png"),
-                                                        forState: .Normal)
-                }catch let error as NSError{
-                    print("Save Failed : \(error.localizedDescription)")
+            if !NSFileManager.defaultManager().fileExistsAtPath(filePath) {
+                if self.songCache?.writeToFile(filePath, atomically: true) == true
+                {
+                    // save it to the database
+                    let entityDesc = NSEntityDescription.entityForName("LocalSong", inManagedObjectContext: managedObjectContext)
+                    let song = LocalSong(entity: entityDesc!, insertIntoManagedObjectContext: managedObjectContext)
+                    song.title = self.onlineSongs.audios[self.onlineSongs.selectedIndex].title
+                    song.imageLink = self.onlineSongs.audios[self.onlineSongs.selectedIndex].imageLink
+                    song.filePath = filePath
+                    do{
+                        try managedObjectContext.save()
+                        self.downLoadBtn.setBackgroundImage(UIImage(named:"player_btn_downloaded_highlight@2x.png"),
+                                                            forState: .Normal)
+                    }catch let error as NSError{
+                        print("Save Failed : \(error.localizedDescription)")
+                    }
                 }
+                
             }
+            
+            
         }
     }
     
@@ -543,5 +628,7 @@ class PlayController: UIViewController ,NSURLSessionDataDelegate, AVAudioPlayerD
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+
 }
 

@@ -22,6 +22,7 @@ class OnlineMusicController: UIViewController,NSURLSessionDataDelegate,UITableVi
         // set the navigationItem
         searchBar.placeholder = "Search in youtube.com"
         searchBar.delegate = self
+        searchBar.tintColor = UIColor.blueColor()
         let searchView = UIView(frame: CGRectMake(0, 0, 250, 30))
         searchView.addSubview(searchBar)
         searchView.layer.masksToBounds = true
@@ -47,6 +48,14 @@ class OnlineMusicController: UIViewController,NSURLSessionDataDelegate,UITableVi
     
     func searchBarSearchButtonClicked(searchBar: UISearchBar) {
         
+        if !reachable("www.google.com")
+        {
+            let alertPopUp:UIAlertController = UIAlertController(title:"Attention",message: "No Network, Please Check Your Device",preferredStyle: UIAlertControllerStyle.Alert)
+            let action = UIAlertAction(title: "OK", style: .Cancel) {action -> Void in}
+            alertPopUp.addAction(action)
+            self.presentViewController(alertPopUp, animated: true, completion: nil)
+        }
+        else{
         let key:String = "AIzaSyBBrATaOXuGZ0YokP3ffOK6m_XsDsld3T4"
         
         let defaultConfigObject:NSURLSessionConfiguration =
@@ -70,7 +79,22 @@ class OnlineMusicController: UIViewController,NSURLSessionDataDelegate,UITableVi
             }
             
         }).resume();
+        }
     }
+    
+    
+    func reachable(hostAddress:String) -> Bool{
+        let reachability:Reachability = Reachability(hostName: hostAddress);
+        let remoteHostStatus:NetworkStatus = reachability.currentReachabilityStatus();
+        
+        if(remoteHostStatus.rawValue == 0) {
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+
 
     func processResponse(data:NSData)
     {
@@ -160,6 +184,7 @@ class OnlineMusicController: UIViewController,NSURLSessionDataDelegate,UITableVi
         self.resultTableView!.deselectRowAtIndexPath(indexPath, animated: true)
         self.searchResults.selectedIndex = indexPath.row
         SingletonPlayer.uniqueAudioPlayer.playingCategory = PlayingCategory.OnlinePlaying
+        SingletonPlayer.uniqueAudioPlayer.playEntrance = PlayEntrance.restart
         self.performSegueWithIdentifier("playOnline", sender: self.searchResults)
     }
 }

@@ -18,14 +18,16 @@ class GoogleSigninViewController: UIViewController , GIDSignInUIDelegate
         //GIDSignIn.sharedInstance().signIn()
         //[[GIDSignIn sharedInstance] signIn];
         // Do any additional setup after loading the view.
-        if(GIDSignIn.sharedInstance().hasAuthInKeychain())
+        if GIDSignIn.sharedInstance().hasAuthInKeychain()
         {
-            logoutButton.hidden = true;
+            logoutButton.hidden = false;
             GIDSignIn.sharedInstance().signInSilently()
         }
         else{
-            logoutButton.hidden = false;
+            logoutButton.hidden = true;
         }
+        let item = UIBarButtonItem(title: "Back", style: .Plain, target: self, action: nil)
+        self.navigationItem.backBarButtonItem = item;
     }
 
     override func didReceiveMemoryWarning() {

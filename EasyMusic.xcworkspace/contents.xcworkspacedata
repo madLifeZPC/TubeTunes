@@ -2,7 +2,7 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:EasyMusic.xcodeproj">
+      location = "group:/Users/Vrinda/Desktop/EasyMusic-3/TubeTunes.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Pods/Pods.xcodeproj">

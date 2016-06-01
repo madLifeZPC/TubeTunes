@@ -17,7 +17,7 @@ class SingletonPlayer{
     var playingCategory : PlayingCategory?
     var playingMode : PlayingMode?
     var songCache : NSData?
-    
+    var playEntrance : PlayEntrance?
     private init(){
        
     }

@@ -13,6 +13,8 @@ class Playlist{
     var title:String?
     var desc:String?
     
+    init (){}
+    
     init(title:String, description:String)
     {
         self.title = title

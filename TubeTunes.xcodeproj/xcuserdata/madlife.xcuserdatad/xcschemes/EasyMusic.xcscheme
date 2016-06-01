@@ -16,8 +16,8 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "0E53B9C21CD59B53000C7902"
                BuildableName = "EasyMusic.app"
-               BlueprintName = "EasyMusic"
-               ReferencedContainer = "container:EasyMusic.xcodeproj">
+               BlueprintName = "TubeTunes"
+               ReferencedContainer = "container:TubeTunes.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -28,34 +28,14 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "0E53B9D61CD59B53000C7902"
-               BuildableName = "EasyMusicTests.xctest"
-               BlueprintName = "EasyMusicTests"
-               ReferencedContainer = "container:EasyMusic.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "0E53B9E11CD59B53000C7902"
-               BuildableName = "EasyMusicUITests.xctest"
-               BlueprintName = "EasyMusicUITests"
-               ReferencedContainer = "container:EasyMusic.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "0E53B9C21CD59B53000C7902"
             BuildableName = "EasyMusic.app"
-            BlueprintName = "EasyMusic"
-            ReferencedContainer = "container:EasyMusic.xcodeproj">
+            BlueprintName = "TubeTunes"
+            ReferencedContainer = "container:TubeTunes.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -77,8 +57,8 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "0E53B9C21CD59B53000C7902"
             BuildableName = "EasyMusic.app"
-            BlueprintName = "EasyMusic"
-            ReferencedContainer = "container:EasyMusic.xcodeproj">
+            BlueprintName = "TubeTunes"
+            ReferencedContainer = "container:TubeTunes.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -96,8 +76,8 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "0E53B9C21CD59B53000C7902"
             BuildableName = "EasyMusic.app"
-            BlueprintName = "EasyMusic"
-            ReferencedContainer = "container:EasyMusic.xcodeproj">
+            BlueprintName = "TubeTunes"
+            ReferencedContainer = "container:TubeTunes.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

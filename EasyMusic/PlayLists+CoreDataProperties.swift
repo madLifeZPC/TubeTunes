@@ -1,8 +1,8 @@
 //
-//  PlayList+CoreDataProperties.swift
+//  PlayLists+CoreDataProperties.swift
 //  EasyMusic
 //
-//  Created by madlife on 8/5/16.
+//  Created by Vrinda Gupta on 10/5/16.
 //  Copyright © 2016 madlife. All rights reserved.
 //
 //  Choose "Create NSManagedObject Subclass…" from the Core Data editor menu
@@ -12,9 +12,9 @@
 import Foundation
 import CoreData
 
-extension PlayList {
+extension PlayLists {
 
     @NSManaged var name: String?
-    @NSManaged var playList_localSong: NSSet?
+    @NSManaged var desc: String?
 
 }

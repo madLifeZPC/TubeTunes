@@ -12,10 +12,15 @@ import CoreData
 
 class RootViewController: UIViewController,UITableViewDelegate,UITableViewDataSource{
     
+    @IBOutlet weak var play_button: UIButton!
     @IBOutlet weak var PlayTableView: UITableView!
     
+    @IBOutlet weak var miniPlayerBtn: UIButton!
     var searchPlayList = PlaylistArray()
     //var new_playlist = Playlist
+    
+    // CoreData context
+    let managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,6 +40,10 @@ class RootViewController: UIViewController,UITableViewDelegate,UITableViewDataSo
         let item = UIBarButtonItem(title: "Back", style: .Plain, target: self, action: nil)
         self.navigationItem.backBarButtonItem = item;
         
+        // load all the playList
+        loadAllPlayList()
+        
+        
         // Do any additional setup after loading the view, typically from a nib.
         PlayTableView.delegate = self
         PlayTableView.dataSource = self
@@ -49,7 +58,7 @@ class RootViewController: UIViewController,UITableViewDelegate,UITableViewDataSo
         let nib = UINib(nibName: "PlaylistCell", bundle: nil)
         self.PlayTableView.registerNib(nib, forCellReuseIdentifier: "PlaylistCell")
         
-    }
+            }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -72,17 +81,86 @@ class RootViewController: UIViewController,UITableViewDelegate,UITableViewDataSo
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         self.PlayTableView.reloadData()
+        self.miniPlayerBtn.setBackgroundImage(UIImage(named: "yoMusic_red58*58.png"), forState: .Normal)
+        
+        if(SingletonPlayer.uniqueAudioPlayer.audioPlayer != nil )
+        {
+            self.play_button.setBackgroundImage(UIImage(named: "player_btn_pause_normalWhite@2x.png"), forState: .Normal)
+            if SingletonPlayer.uniqueAudioPlayer.playingCategory == PlayingCategory.OnlinePlaying{
+                self.miniPlayerBtn.setBackgroundImage(UIImage(data: NSData(contentsOfURL: NSURL(string: YoutubeAudioArray.publicOnlinePlayList.audios[YoutubeAudioArray.publicOnlinePlayList.selectedIndex].imageLink!)!)!),forState: .Normal)
+            }
+            else
+            {
+                self.miniPlayerBtn.setBackgroundImage(UIImage(data: NSData(contentsOfURL: NSURL(string: LocalAudioArray.publicLocalPlayList.audios[LocalAudioArray.publicLocalPlayList.selectedIndex].imageLink!)!)!), forState: .Normal)
+            }
+        }
+        else{
+            self.play_button.setBackgroundImage(UIImage(named: "player_btn_play_normalWhite@2x.png"), forState: .Normal)
+        }
+        
+
     }
     
     //Adding a new PlayList
     
     @IBAction func AddNewPlaylist(sender: AnyObject) {
-        self.searchPlayList.playlist_audios.append(Playlist(title: "NewPlaylist", description: "Description"))
+        
+        let entityDesc = NSEntityDescription.entityForName("PlayLists", inManagedObjectContext: managedObjectContext)
+        let newPlayList = PlayLists(entity: entityDesc!, insertIntoManagedObjectContext: managedObjectContext)
+        
+        let request = NSFetchRequest()
+        request.entity = entityDesc
+        var numberOfPlayList = 0
+        do{
+            let results = try managedObjectContext.executeFetchRequest(request)
+            print(results.count)
+            numberOfPlayList = results.count
+        }catch let error as NSError{
+            print("Failed : \(error.localizedDescription)")
+        }catch{
+            
+        }
+        let name = "NewPlaylist" + String(numberOfPlayList)
+        let desc = "Description"
+        newPlayList.name = name
+        newPlayList.desc = desc
+        
+        do{
+            try managedObjectContext.save()
+        }catch let error as NSError{
+            print("Failed : \(error.localizedDescription)")
+        }catch{
+            
+        }
+        
+        self.searchPlayList.playlist_audios.append(Playlist(title: name, description: desc))
         self.PlayTableView.reloadData()
         
+    }
+    
+    func loadAllPlayList()
+    {
+        let entityDesc = NSEntityDescription.entityForName("PlayLists", inManagedObjectContext: managedObjectContext)
         
-        
-        
+        let request = NSFetchRequest()
+        request.entity = entityDesc
+        do{
+            let results = try managedObjectContext.executeFetchRequest(request)
+            var i = 0
+            while i < results.count {
+                let playlist = Playlist()
+                let match = results[i] as! NSManagedObject
+                playlist.title = (match.valueForKey("name") as! String)
+                playlist.desc = (match.valueForKey("desc") as! String)
+                self.searchPlayList.playlist_audios.append(playlist)
+                i += 1
+            }
+        }catch let error as NSError{
+            print("Failed : \(error.localizedDescription)")
+        }catch{
+            
+        }
+
     }
     
     // TableView
@@ -136,12 +214,114 @@ class RootViewController: UIViewController,UITableViewDelegate,UITableViewDataSo
     
     func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         if editingStyle == .Delete {
-            searchPlayList.playlist_audios.removeAtIndex(indexPath.row)
-            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+            
+            
+            let alertPopUp:UIAlertController = UIAlertController(title:"Confirmation",message: "Are you sure to delete this playlist?",preferredStyle: UIAlertControllerStyle.Alert)
+            
+            let confirmAction = UIAlertAction(title: "YES", style: .Destructive){
+                action -> Void in
+                
+                
+                let selectedTitle = self.searchPlayList.playlist_audios[indexPath.row].title
+                let selectedPlayList = self.findPlayList( selectedTitle! )
+                
+                if selectedPlayList != nil {
+                    do {
+                        // delete the record from playlist table
+                        self.managedObjectContext.deleteObject(selectedPlayList!)
+                        
+                        // delete the record from playcontent table
+                        let entityDesc = NSEntityDescription.entityForName("ListContent", inManagedObjectContext: self.managedObjectContext)
+                        let request = NSFetchRequest()
+                        request.entity = entityDesc
+                        let pred = NSPredicate(format: "(listName = %@)", selectedTitle!)
+                        request.predicate = pred
+                        
+                        do{
+                            let results = try self.managedObjectContext.executeFetchRequest(request)
+                            var i = 0
+                            while( i < results.count ) {
+                                let match = results[i] as! NSManagedObject
+                                let playListItem =  (match as! ListContent)
+                                self.managedObjectContext.deleteObject(playListItem)
+                                i = i + 1
+                            }
+                        }catch let error as NSError{
+                            print("Failed : \(error.localizedDescription)")
+                        }
+                        
+                        try self.managedObjectContext.save()
+                        
+                        // delete the ui cell
+                        self.searchPlayList.playlist_audios.removeAtIndex(indexPath.row)
+                        tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+                    }catch let error as NSError{
+                        print("Failed : \(error.localizedDescription)")
+                    }catch{
+                        
+                    }
+                }
+            }
+            let cancelAction = UIAlertAction(title: "NO", style: .Cancel) {action -> Void in}
+            alertPopUp.addAction(confirmAction)
+            alertPopUp.addAction(cancelAction)
+            self.presentViewController(alertPopUp, animated: true, completion: nil)
+            
         }
     }
     
+    // find playList
+    func findPlayList( title : String ) -> PlayLists? {
+        
+        let entityDesc = NSEntityDescription.entityForName("PlayLists", inManagedObjectContext: managedObjectContext)
+        let request = NSFetchRequest()
+        request.entity = entityDesc
+        let pred = NSPredicate(format: "(name = %@)", title)
+        request.predicate = pred
+        
+        do{
+            let results = try managedObjectContext.executeFetchRequest(request)
+            if( results.count > 0 ) {
+                let match = results[0] as! NSManagedObject
+                return (match as! PlayLists)
+            }
+        }catch let error as NSError{
+            print("Failed : \(error.localizedDescription)")
+        }
+        catch{
+            
+        }
+        return nil
+    }
+
     
+    @IBAction func goToPlayerPressed(sender: AnyObject) {
+        if SingletonPlayer.uniqueAudioPlayer.audioPlayer != nil && SingletonPlayer.uniqueAudioPlayer.playingCategory != nil
+        {
+            print("Here")
+            SingletonPlayer.uniqueAudioPlayer.playEntrance = PlayEntrance.goon
+            self.performSegueWithIdentifier("gotoplayer", sender: self)
+        }
+        else
+        {
+            //TODO: ALERT NOTHING PLAYING
+        }
+    }
+  
+    @IBAction func playPauseButtonPressed(sender: AnyObject) {
+        if SingletonPlayer.uniqueAudioPlayer.audioPlayer != nil{
+            if SingletonPlayer.uniqueAudioPlayer.audioPlayer?.playing == true{
+                SingletonPlayer.uniqueAudioPlayer.audioPlayer?.pause()
+                
+                play_button.setBackgroundImage(UIImage(named: "player_btn_play_normalWhite@2x.png"), forState: .Normal)
+            }
+            else
+            {
+                SingletonPlayer.uniqueAudioPlayer.audioPlayer?.play()
+                play_button.setBackgroundImage(UIImage(named: "player_btn_pause_normalWhite@2x.png"), forState: .Normal)
+            }
+        }
+    }
     
     
     

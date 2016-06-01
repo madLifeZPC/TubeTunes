@@ -24,6 +24,8 @@ class PlaylistitemViewController: UITableViewController, NSURLSessionDelegate {
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
+        let item = UIBarButtonItem(title: "Back", style: .Plain, target: self, action: nil)
+        self.navigationItem.backBarButtonItem = item;
     }
     override func viewWillAppear(animated: Bool) {
         //print(playlist?.playlistTitle)
@@ -154,6 +156,7 @@ class PlaylistitemViewController: UITableViewController, NSURLSessionDelegate {
         //self.deselectRowAtIndexPath(indexPath, animated: true)
         self.searchResults.selectedIndex = indexPath.row
         SingletonPlayer.uniqueAudioPlayer.playingCategory = PlayingCategory.OnlinePlaying
+        SingletonPlayer.uniqueAudioPlayer.playEntrance = PlayEntrance.restart
         self.performSegueWithIdentifier("playOnline", sender: self.searchResults)
         
     }

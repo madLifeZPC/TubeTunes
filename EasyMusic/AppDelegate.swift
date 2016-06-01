@@ -149,7 +149,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate ,NSURLSessionDataDelegate,
                         }
                         
                     case UIEventSubtype.RemoteControlNextTrack?:
-                        print("play next song")
                         playNextSong()
                     case UIEventSubtype.RemoteControlPreviousTrack?:
                         playPreSong()
@@ -196,7 +195,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate ,NSURLSessionDataDelegate,
             dict[NSLocalizedDescriptionKey] = "Failed to initialize the application's saved data"
             dict[NSLocalizedFailureReasonErrorKey] = failureReason
             
-            dict[NSUnderlyingErrorKey] = error as NSError
+            dict[NSUnderlyingErrorKey] = error as! NSError
             let wrappedError = NSError(domain: "YOUR_ERROR_DOMAIN", code: 9999, userInfo: dict)
             // Replace this with code to handle the error appropriately.
             // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
@@ -291,6 +290,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate ,NSURLSessionDataDelegate,
             }
         }
 
+    }
+    func application (application: UIApplication, supportedInterfaceOrientationsForWindow window: UIWindow?) -> UIInterfaceOrientationMask {
+        return checkOrientation(self.window?.rootViewController)
+    }
+    
+    func checkOrientation (viewController: UIViewController?) -> UIInterfaceOrientationMask {
+        if viewController == nil {
+            return UIInterfaceOrientationMask.Portrait
+            
+        } else if viewController is PlayController {
+            return UIInterfaceOrientationMask.Portrait
+            
+        }
+            
+        else {
+            return checkOrientation(viewController!.presentedViewController)
+        }
     }
 
 }
